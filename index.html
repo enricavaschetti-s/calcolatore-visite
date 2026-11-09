@@ -53,7 +53,8 @@
   .rules b{color:var(--teal-dark)}
   .rules hr{border:none; border-top:1px solid #eef2f1; margin:10px 0}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
   <div class="card">
@@ -219,26 +220,41 @@
       </div>
     </div>`;
 
-    if(typeof html2pdf==='undefined'){
+    if(typeof html2canvas==='undefined' || !window.jspdf){
       const w=window.open('','_blank'); w.document.write(html); w.document.close(); w.focus(); w.print(); return;
     }
     const el=document.createElement('div');
     el.innerHTML=html;
     el.style.width='794px';
     el.style.background='#fff';
-    el.style.position='fixed';
+    el.style.position='absolute';
     el.style.left='0';
     el.style.top='0';
-    el.style.zIndex='-9999';
+    el.style.zIndex='2147483647';
+    el.style.pointerEvents='none';
     document.body.appendChild(el);
     const nome='Preventivo_visita'+(scuola?'_'+scuola.replace(/[^a-zA-Z0-9]+/g,'_'):'')+'.pdf';
-    html2pdf().set({
-      margin:0,
-      filename:nome,
-      pagebreak:{mode:'legacy'},
-      html2canvas:{scale:2,scrollX:0,scrollY:0,useCORS:true,backgroundColor:'#ffffff'},
-      jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
-    }).from(el).save().then(()=>el.remove()).catch(()=>el.remove());
+    html2canvas(el,{
+      scale:2,
+      scrollX:0,
+      scrollY:0,
+      windowWidth:794,
+      windowHeight:el.scrollHeight,
+      useCORS:true,
+      backgroundColor:'#ffffff'
+    }).then(canvas=>{
+      const {jsPDF}=window.jspdf;
+      const pdf=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+      const pageW=pdf.internal.pageSize.getWidth();
+      const pageH=pdf.internal.pageSize.getHeight();
+      const naturalH=canvas.height*pageW/canvas.width;
+      const factor=Math.min(1,pageH/naturalH);
+      const imageW=pageW*factor;
+      const imageH=naturalH*factor;
+      const imageX=(pageW-imageW)/2;
+      pdf.addImage(canvas.toDataURL('image/png'),'PNG',imageX,0,imageW,imageH,undefined,'FAST');
+      pdf.save(nome);
+    }).finally(()=>el.remove());
   }
   calc();
 </script>
