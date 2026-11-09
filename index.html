@@ -212,7 +212,7 @@
           <b>Preventivo indicativo.</b> Gli importi si basano sui numeri comunicati in fase di prenotazione. Il conteggio dei presenti effettivi (alunni, persone con disabilit&agrave;, accompagnatori e docenti) sar&agrave; verificato e certificato il giorno della visita e costituir&agrave; la base per l'importo definitivo.<br>
           Gratuit&agrave; applicate: persone con disabilit&agrave; e loro accompagnatori (max 1 ciascuna); 1 docente gratuito ogni 10 alunni, arrotondato per eccesso. Pagamento in loco il giorno della visita. Documento non fiscale.
         </div>
-        <div style="border:3px solid #b42318;background:#fff1f0;color:#8a1c13;border-radius:10px;padding:14px 16px;margin-top:20px;text-align:center;line-height:1.35;page-break-inside:avoid">
+        <div style="border:3px solid #b42318;background:#fff1f0;color:#8a1c13;border-radius:10px;padding:14px 16px;margin-top:20px;text-align:center;line-height:1.35">
           <div style="font-size:18px;font-weight:800;letter-spacing:.02em">ATTENZIONE: IL PRESENTE PREVENTIVO NON COSTITUISCE PRENOTAZIONE.</div>
           <div style="font-size:13px;font-weight:700;margin-top:7px">La prenotazione della visita deve essere effettuata esclusivamente tramite SimplyBook.</div>
         </div>
@@ -235,7 +235,7 @@
     html2pdf().set({
       margin:0,
       filename:nome,
-      pagebreak:{mode:['css','legacy']},
+      pagebreak:{mode:'legacy'},
       html2canvas:{scale:2,scrollX:0,scrollY:0,useCORS:true,backgroundColor:'#ffffff'},
       jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
     }).from(el).save().then(()=>el.remove()).catch(()=>el.remove());
