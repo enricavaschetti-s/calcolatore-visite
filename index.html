@@ -222,10 +222,23 @@
     if(typeof html2pdf==='undefined'){
       const w=window.open('','_blank'); w.document.write(html); w.document.close(); w.focus(); w.print(); return;
     }
-    const el=document.createElement('div'); el.innerHTML=html;
+    const el=document.createElement('div');
+    el.innerHTML=html;
+    el.style.width='794px';
+    el.style.background='#fff';
+    el.style.position='fixed';
+    el.style.left='0';
+    el.style.top='0';
+    el.style.zIndex='-9999';
+    document.body.appendChild(el);
     const nome='Preventivo_visita'+(scuola?'_'+scuola.replace(/[^a-zA-Z0-9]+/g,'_'):'')+'.pdf';
-    html2pdf().set({margin:0,filename:nome,html2canvas:{scale:2},
-      jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).save();
+    html2pdf().set({
+      margin:0,
+      filename:nome,
+      pagebreak:{mode:['css','legacy']},
+      html2canvas:{scale:2,scrollX:0,scrollY:0,useCORS:true,backgroundColor:'#ffffff'},
+      jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+    }).from(el).save().then(()=>el.remove()).catch(()=>el.remove());
   }
   calc();
 </script>
